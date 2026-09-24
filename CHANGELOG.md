@@ -9,6 +9,27 @@
 
 ## [Unreleased]
 
+## [2.3.2-beta.1525] — 2026-09-24
+
+### Исправлено
+
+- **Подсказка про сертификат.** Раньше она и документация предлагали
+  раскомментировать строку `NODE_EXTRA_CA_CERTS` в `.env`, а у тех, кто
+  обновлялся с прошлой версии, такой строки нет: `git pull` меняет только
+  `.env.example`. Теперь подсказка на дашборде, в `/readyz` и в логе даёт
+  строку целиком — `NODE_EXTRA_CA_CERTS=/app/certs/ca.pem` — и команду
+  `docker compose up -d`.
+- **Документация:** `.env` применяет только `docker compose up -d`, а
+  `docker compose restart` и перезапуск в Docker Desktop оставляют прежние
+  настройки — об этом теперь сказано в
+  [docs/08-update.md](docs/08-update.md) и
+  [docs/09-troubleshooting.md](docs/09-troubleshooting.md).
+
+### Как обновиться
+
+`docker compose pull` и `docker compose up -d`. `git pull` — по желанию:
+изменилась только документация.
+
 ## [2.3.1-beta.1525] — 2026-09-24
 
 ### Исправлено
