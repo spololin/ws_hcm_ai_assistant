@@ -29,6 +29,9 @@ services:
       # Порты внутри контейнера фиксированы, наружу маппятся ниже.
       HTTP_PORT: 3000
       SSE_PORT: 3001
+      # Порты снаружи — только для строки «server ready» с адресами в логе.
+      ASSISTANT_HTTP_PORT: ${ASSISTANT_HTTP_PORT:-3100}
+      ASSISTANT_SSE_PORT: ${ASSISTANT_SSE_PORT:-3101}
       MCP_STDIO: 0
 
     # Наружу — порты из .env (по умолчанию 3100 и 3101). Сервер виден всей
@@ -43,6 +46,9 @@ services:
       - ./logs:/app/logs
       # Модель поиска (~120 МБ) и кеш векторов: чтобы не качать заново.
       - ./models:/app/models
+      # Корневые сертификаты, если HTTPS перехватывает антивирус или прокси
+      # (подключаются строкой NODE_EXTRA_CA_CERTS в .env).
+      - ./certs:/app/certs:ro
       # Каталог WebSoftServer, только чтение. Путь задаётся в .env.
       - "${HCM_HOST_PATH:?Укажите HCM_HOST_PATH в .env — путь к каталогу WebSoftServer}:/hcm:ro"
       - mcp-index:/app/data
