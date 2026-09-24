@@ -59,7 +59,7 @@ AI-ассистент подойдет в первую очередь разра
 | [docs/05-prompts.md](docs/05-prompts.md) | Готовые правила для моделей |
 | [docs/06-dashboard.md](docs/06-dashboard.md) | Дашборд статистики |
 | [docs/07-feedback.md](docs/07-feedback.md) | Как прислать обратную связь |
-| [docs/08-update.md](docs/08-update.md) | Обновление и откат |
+| [docs/08-update.md](docs/08-update.md) | Обновление |
 | [docs/09-troubleshooting.md](docs/09-troubleshooting.md) | Если что-то пошло не так. Beta всё-таки :-) |
 | [docs/10-faq.md](docs/10-faq.md) | Частые вопросы |
 | [LICENSE-BETA.md](LICENSE-BETA.md) | Условия беты |
