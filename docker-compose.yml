@@ -1,0 +1,93 @@
+# AI-ассистент Websoft HCM — запуск готового образа.
+# Образ не собирается: он скачивается из реестра. Всё настраиваемое — в .env.
+# Свои изменения этого файла класть в docker-compose.override.yml: обновление
+# перезаписывает docker-compose.yml.
+
+name: ws_hcm_ai_assistant
+
+services:
+  ws_hcm_ai_assistant:
+    image: ${ASSISTANT_IMAGE:-ghcr.io/spololin/ws_hcm_ai_assistant}:${ASSISTANT_TAG:-latest}
+    container_name: ws_hcm_ai_assistant
+    restart: unless-stopped
+
+    # Пароли и токены читает демон Docker при старте контейнера; в образе их нет.
+    env_file:
+      - ./.env
+
+    # Значения ниже перекрывают .env — внутри контейнера пути и порты свои.
+    environment:
+      NODE_ENV: production
+      # Каталог WebSoftServer смонтирован в /hcm (см. volumes).
+      HCM_PATH: /hcm
+      LOG_DIR: /app/logs
+      EMBEDDING_MODEL_CACHE_DIR: /app/models
+      EMBEDDING_VECTORS_CACHE_DIR: /app/models/vectors
+      # Индекс дашборда — на именованном томе, а не на смонтированной папке:
+      # SQLite в режиме WAL требует файловую систему Linux.
+      DASHBOARD_SQLITE_PATH: /app/data/mcp-usage.sqlite
+      # Порты внутри контейнера фиксированы, наружу маппятся ниже.
+      HTTP_PORT: 3000
+      SSE_PORT: 3001
+      MCP_STDIO: 0
+
+    # Наружу — порты из .env (по умолчанию 3100 и 3101). Сервер виден всей
+    # локальной сети: доступ ограничивает MCP_AUTH_TOKEN, а не сеть. Чтобы
+    # пускать только с этой машины, верните префикс "127.0.0.1:".
+    ports:
+      - "${ASSISTANT_HTTP_PORT:-3100}:3000"
+      - "${ASSISTANT_SSE_PORT:-3101}:3001"
+
+    volumes:
+      # Логи и выгрузки телеметрии — рядом с этим файлом.
+      - ./logs:/app/logs
+      # Модель поиска (~120 МБ) и кеш векторов: чтобы не качать заново.
+      - ./models:/app/models
+      # Каталог WebSoftServer, только чтение. Путь задаётся в .env.
+      - "${HCM_HOST_PATH:?Укажите HCM_HOST_PATH в .env — путь к каталогу WebSoftServer}:/hcm:ro"
+      - mcp-index:/app/data
+
+    # Если база указана как localhost хоста.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:3000/healthz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      # Первый старт читает ~1000 файлов схемы; через сетевую папку это дольше.
+      start_period: 300s
+
+volumes:
+  mcp-index:
+
+# ----------------------------------------------------------------------------
+# Каталог WebSoftServer на сетевой шаре. Раскомментируйте блок ниже, замените
+# путь в volumes сервиса на "hcm-share:/hcm:ro" и задайте HCM_SHARE_* в .env.
+#
+# volumes:
+#   hcm-share:
+#     driver: local
+#     driver_opts:
+#       type: cifs
+#       o: "username=${HCM_SHARE_USER},password=${HCM_SHARE_PASSWORD},ro,vers=3.0,uid=1000,gid=1000"
+#       device: "//${HCM_SHARE_HOST}/${HCM_SHARE_NAME}"
+#
+# Для NFS:
+#   hcm-share:
+#     driver: local
+#     driver_opts:
+#       type: nfs
+#       o: "addr=${HCM_SHARE_HOST},ro,nfsvers=4"
+#       device: ":/${HCM_SHARE_NAME}"
