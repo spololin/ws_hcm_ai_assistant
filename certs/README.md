@@ -7,7 +7,9 @@ ESET и другие с проверкой защищённых соединен
 1. Положите сюда корневой сертификат перехватчика в формате PEM под именем
    `ca.pem`. Как выгрузить его на Windows, macOS и Linux —
    [docs/09-troubleshooting.md](../docs/09-troubleshooting.md#как-выгрузить-сертификат).
-2. В `.env` раскомментируйте строку `NODE_EXTRA_CA_CERTS=/app/certs/ca.pem`.
-3. Выполните `docker compose up -d`.
+2. Добавьте в `.env` строку `NODE_EXTRA_CA_CERTS=/app/certs/ca.pem` (или
+   уберите `#` перед ней, если она там уже есть).
+3. Выполните `docker compose up -d` — не `docker compose restart`: он не
+   перечитывает `.env`.
 
 Папка монтируется в контейнер только для чтения.

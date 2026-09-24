@@ -24,6 +24,11 @@ curl http://localhost:3100/healthz
 документацию), в разделе «Как обновиться» будет сказано выполнить `git pull`
 в папке ассистента перед `docker compose pull`.
 
+`git pull` обновляет `.env.example`, но не ваш `.env`: новую настройку, если
+она нужна, перенесите в `.env` сами. Любую правку `.env` применяет только
+`docker compose up -d` — `docker compose restart` и перезапуск в Docker
+Desktop оставляют прежние значения.
+
 **LLM клиенты держат список инструментов с момента подключения.** После
 обновления перезапустите MCP клиент в IDE — иначе модель не увидит 
 новые инструменты, а про старые будет думать, что они есть.
@@ -39,7 +44,7 @@ curl http://localhost:3100/healthz
 В `.env`:
 
 ```ini
-ASSISTANT_TAG=2.3.1-beta.1525
+ASSISTANT_TAG=2.3.2-beta.1525
 ```
 
 и `docker compose up -d`. Тогда `docker compose pull` не подтянет новую сборку.
