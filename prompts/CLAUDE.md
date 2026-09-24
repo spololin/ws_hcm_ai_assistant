@@ -23,7 +23,7 @@
 - `compose_sql(object_name, fields?, include_custom?, description?)` — готовые SQL-выражения и SELECT-скелет.
 - `query_object(object_name, fields?, where?, order_by?, limit?, …)` — **читает сами данные** без написания SQL: условия `{field, op, value}`, значения идут параметрами.
 - `execute_sql(sql, max_rows?)` — выполняет готовый `SELECT` в диалекте активной СУБД. Только чтение.
-- `list_objects(is_hier?, limit?, offset?)` — все объекты. Только по явной просьбе.
+- `list_objects(is_hier?, custom_fields?, limit?, offset?)` — все объекты. Только по явной просьбе; исключение — `custom_fields=defined` (где заведены настраиваемые поля) и `custom_fields=supported` (где их можно завести).
 - `record_feedback(task_summary, useful_tools, useless_tools, missing_capability?, comment?, llm_model?, outcome?)` — фидбек в конце задачи.
 
 ## Когда обязательно дёргать MCP до написания кода (MUST)

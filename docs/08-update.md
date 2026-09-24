@@ -44,7 +44,7 @@ Desktop оставляют прежние значения.
 В `.env`:
 
 ```ini
-ASSISTANT_TAG=2.4.0-beta.1525
+ASSISTANT_TAG=2.4.1-beta.1525
 ```
 
 и `docker compose up -d`. Тогда `docker compose pull` не подтянет новую сборку.
