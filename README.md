@@ -66,6 +66,7 @@ AI-ассистент подойдет в первую очередь разра
 | [docs/08-update.md](docs/08-update.md) | Обновление |
 | [docs/09-troubleshooting.md](docs/09-troubleshooting.md) | Если что-то пошло не так. Beta всё-таки :-) |
 | [docs/10-faq.md](docs/10-faq.md) | Частые вопросы |
+| [docs/11-write-api.md](docs/11-write-api.md) | Создание и изменение карточек в HCM |
 | [LICENSE-BETA.md](LICENSE-BETA.md) | Условия беты |
 | [CHANGELOG.md](CHANGELOG.md) | Что изменилось в версиях |
 
