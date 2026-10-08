@@ -81,13 +81,18 @@ volumes:
 # ----------------------------------------------------------------------------
 # Каталог WebSoftServer на сетевой шаре. Раскомментируйте блок ниже, замените
 # путь в volumes сервиса на "hcm-share:/hcm:ro" и задайте HCM_SHARE_* в .env.
+# Доменная учётка — HCM_SHARE_DOMAIN в .env: домен попадает в параметры
+# монтирования только когда переменная задана. Писать домен в логине
+# (DOMAIN\user) нельзя: том монтирует ядро, оно логин не разбирает.
+# Том создаётся один раз; после правки HCM_SHARE_* пересоздайте его:
+#   docker compose down && docker volume rm ws_hcm_ai_assistant_hcm-share
 #
 # volumes:
 #   hcm-share:
 #     driver: local
 #     driver_opts:
 #       type: cifs
-#       o: "username=${HCM_SHARE_USER},password=${HCM_SHARE_PASSWORD},ro,vers=3.0,uid=1000,gid=1000"
+#       o: "username=${HCM_SHARE_USER},password=${HCM_SHARE_PASSWORD},${HCM_SHARE_DOMAIN:+domain=${HCM_SHARE_DOMAIN},}ro,vers=3.0,uid=1000,gid=1000"
 #       device: "//${HCM_SHARE_HOST}/${HCM_SHARE_NAME}"
 #
 # Для NFS:

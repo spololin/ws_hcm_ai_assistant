@@ -158,6 +158,38 @@ HCM_HOST_PATH=/mnt/c/Program Files/WebSoft/WebSoftServer
 замените в сервисе строку тома `"${HCM_HOST_PATH:?...}:/hcm:ro"` на
 `hcm-share:/hcm:ro` и заполните `HCM_SHARE_*` в `.env`.
 
+Пример для шары Windows под доменной учёткой, путь
+`\\wt-srv01.corp.local\D$\Websoft\WebSoftServer`:
+
+```ini
+HCM_SHARE_HOST=wt-srv01.corp.local
+HCM_SHARE_NAME='D$/Websoft/WebSoftServer'
+HCM_SHARE_USER=ivanov
+HCM_SHARE_PASSWORD=...
+HCM_SHARE_DOMAIN=CORP
+```
+
+- Домен указывается отдельной переменной, а не в логине: том монтирует ядро
+  Linux внутри Docker, и запись `CORP\ivanov` оно не разбирает. Для локальной
+  учётки сервера `HCM_SHARE_DOMAIN` не заполняйте. Домен — часть до обратного
+  слеша в выводе `whoami`.
+- Имя шары со знаком `$` берите в одинарные кавычки, иначе compose примет `$`
+  за подстановку переменной. Административная шара `D$` требует учётку с
+  правами администратора на сервере.
+- Пароль не должен содержать запятую и кавычки: параметры монтирования
+  разделяются запятыми.
+- Том создаётся при первом `docker compose up` и дальше не меняется. После
+  правки `HCM_SHARE_*` пересоздайте его:
+
+  ```bash
+  docker compose down && docker volume rm ws_hcm_ai_assistant_hcm-share
+  ```
+
+- Ошибки монтирования видны прямо в выводе `docker compose up`:
+  `mount error(13)` — логин, пароль или домен; `mount error(2)` — путь в
+  `HCM_SHARE_NAME`; `could not resolve address` — укажите в `HCM_SHARE_HOST`
+  IP вместо имени.
+
 Запасной путь — смонтировать шару средствами операционной системы и указать
 получившийся путь в `HCM_HOST_PATH`. На Windows с Docker Desktop подключённый
 сетевой диск (`Z:\`) контейнеру **не виден**: монтируйте шару внутри WSL
