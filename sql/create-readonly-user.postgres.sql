@@ -13,6 +13,12 @@ GRANT SELECT ON ALL TABLES IN SCHEMA dbo TO ws_hcm_ai_assistant;
 ALTER DEFAULT PRIVILEGES FOR ROLE ВЛАДЕЛЕЦ_ТАБЛИЦ IN SCHEMA dbo
     GRANT SELECT ON TABLES TO ws_hcm_ai_assistant;
 
+-- Необязательно — для монитора СУБД (DB_MONITOR_ENABLED=true), см. docs/02-database-user.md.
+-- GRANT pg_monitor TO ws_hcm_ai_assistant;
+-- Статистика времени выполнения: библиотеку pg_stat_statements ДОПИСАТЬ в shared_preload_libraries,
+-- перезапустить PostgreSQL, затем в базе HCM:
+-- CREATE EXTENSION IF NOT EXISTS pg_stat_statements;
+
 -- Проверка (выполните под новой учётной записью):
 --   SELECT id FROM dbo.collaborators LIMIT 1;
 --   SELECT count(*) FROM information_schema.columns WHERE table_schema = 'dbo';
